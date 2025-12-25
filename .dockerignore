@@ -8,10 +8,21 @@ __pycache__
 *.pyo
 *.pyd
 .pytest_cache
-test_results.txt
-test_results_utf8.txt
-test_run_output.txt
-test_app.py
+test_results/
 Dockerfile
 .github
 README.md
+pytest.ini
+
+# Ignore local test artifacts that cause Unicode issues
+test_results.txt
+test_results_utf8.txt
+test_run_output.txt
+test_output.txt
+test_output_auth.txt
+test_run_output.txt
+test_results.txt
+test_results_utf8.txt
+
+# Do NOT ignore requirements.txt
+!requirements.txt
