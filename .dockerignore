@@ -1,0 +1,17 @@
+.git
+.gitignore
+.dockerignore
+.env
+.env.example
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+test_results.txt
+test_results_utf8.txt
+test_run_output.txt
+test_app.py
+Dockerfile
+.github
+README.md
