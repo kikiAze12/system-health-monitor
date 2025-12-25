@@ -1,0 +1,25 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.0.2, pluggy-1.6.0
+rootdir: D:\Desktop\devops_project
+collected 3 items
+
+test_app.py .F.                                                          [100%]
+
+================================== FAILURES ===================================
+_______________________ test_health_endpoint_authorized _______________________
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_health_endpoint_authorized(client):
+        """Test if the health endpoint returns a valid response when authorized."""
+        # Default credentials from app.py or .env (fallback to admin/password in app.py)
+        valid_auth = base64.b64encode(b"admin:password").decode('utf-8')
+        response = client.get('/health', headers={'Authorization': f'Basic {valid_auth}'})
+>       assert response.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+test_app.py:21: AssertionError
+=========================== short test summary info ===========================
+FAILED test_app.py::test_health_endpoint_authorized - assert 401 == 200
+========================= 1 failed, 2 passed in 0.91s =========================

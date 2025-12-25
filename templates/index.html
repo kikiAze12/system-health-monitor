@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Health Monitor</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="scanline"></div>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="pulse-icon">◈</span> NET_WATCH
+            </div>
+            <nav>
+                <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+                    <span class="icon">▤</span> DASHBOARD
+                </div>
+                <div class="nav-item" id="nav-network" onclick="switchView('network')">
+                    <span class="icon">⋈</span> NETWORK
+                </div>
+                <div class="nav-item" id="nav-security" onclick="switchView('security')">
+                    <span class="icon">⌬</span> SECURITY
+                </div>
+                <div class="nav-item" id="nav-power" onclick="switchView('power')">
+                    <span class="icon">⌁</span> POWER
+                </div>
+            </nav>
+            <div class="sys-info">
+                <div>SERVER: <span class="highlight-text">ALPHA-1</span></div>
+                <div>UPTIME: <span id="uptime">04:22:19</span></div>
+                <div class="separator"></div>
+                <div class="status-indicator online">SYSTEM ONLINE</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <header>
+                <div class="header-left">
+                    <h1>SYSTEM OVERRIDE v2.0</h1>
+                    <div class="subtitle">REAL-TIME MONITORING PROTOCOL</div>
+                </div>
+                <div class="header-right">
+                    <div id="connection-status" class="status-badge">CONNECTED</div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view-section">
+                <div class="dashboard-grid">
+                    <!-- CPU Card -->
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// CPU_LOAD</h2>
+                            <span id="cpu-value" class="value-display">0%</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cpuChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Memory Card -->
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// MEMORY_ALLOC</h2>
+                            <span id="memory-value" class="value-display">0%</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="memoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Disk Card -->
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// STORAGE_ROOT</h2>
+                            <span id="disk-value" class="value-display">0%</span>
+                        </div>
+                        <div class="disk-visual">
+                            <div class="progress-bar-container">
+                                <div id="disk-bar" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="disk-meta">
+                                <span>/dev/sda1</span>
+                                <span>MOUNTED</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Log Card (New) -->
+                    <div class="card tech-border log-card">
+                        <div class="card-header">
+                            <h2>// SYSTEM_LOG</h2>
+                        </div>
+                        <div class="log-container" id="system-log">
+                            <div class="log-entry"><span class="timestamp">[12:00:01]</span> INITIALIZING MONITORING
+                                SEQUENCE...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network View (Hidden by default) -->
+            <div id="view-network" class="view-section" style="display: none;">
+                <div class="dashboard-grid">
+                    <!-- Upload Speed -->
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// UPLOAD_STREAM</h2>
+                            <span id="net-sent-value" class="value-display">0 KB/s</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="netSentChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Download Speed -->
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// DOWNLOAD_STREAM</h2>
+                            <span id="net-recv-value" class="value-display">0 KB/s</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="netRecvChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security View -->
+            <div id="view-security" class="view-section" style="display: none;">
+                <div class="dashboard-grid">
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// FIREWALL_STATUS</h2>
+                            <span class="status-badge online">ACTIVE</span>
+                        </div>
+                        <div class="security-meta">
+                            <div class="meta-item"><span>ENCRYPTION:</span> <span class="highlight-text">AES-256</span>
+                            </div>
+                            <div class="meta-item"><span>THREAT_LEVEL:</span> <span class="highlight-text"
+                                    style="color: #00f3ff;">LOW</span></div>
+                            <div class="meta-item"><span>LAST_SCAN:</span> <span class="highlight-text">2 SEC AGO</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card tech-border log-card">
+                        <div class="card-header">
+                            <h2>// INTRUSION_LOG</h2>
+                        </div>
+                        <div class="log-container" id="security-log">
+                            <div class="log-entry"><span class="timestamp">[08:55:10]</span> FIREWALL INITIALIZED...
+                            </div>
+                            <div class="log-entry"><span class="timestamp">[08:55:12]</span> NO UNAUTHORIZED ACCESS
+                                DETECTED.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power View -->
+            <div id="view-power" class="view-section" style="display: none;">
+                <div class="dashboard-grid">
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// POWER_SOURCE</h2>
+                            <span class="value-display">GRID</span>
+                        </div>
+                        <div class="power-stats">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 85%; background: #bd00ff;"></div>
+                            </div>
+                            <div class="disk-meta">
+                                <span>EFFICIENCY</span>
+                                <span>85%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card tech-border">
+                        <div class="card-header">
+                            <h2>// VOLTAGE_STABILITY</h2>
+                            <span class="value-display" style="color: #00f3ff;">99.8%</span>
+                        </div>
+                        <div
+                            style="padding: 20px; font-family: 'Orbitron', sans-serif; color: #7aa0cd; font-size: 0.8rem;">
+                            OSCILLATION: <span style="color: #00f3ff;">NOMINAL</span><br>
+                            FREQUENCY: <span style="color: #00f3ff;">60.02 Hz</span><br>
+                            LOAD_BALANCE: <span style="color: #00f3ff;">OPTIMIZED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>
