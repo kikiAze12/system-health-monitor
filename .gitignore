@@ -8,3 +8,6 @@ venv/
 .idea/
 .vscode/
 *.swp
+*.txt
+.pytest_cache/
+test_results/
